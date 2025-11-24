@@ -82,24 +82,24 @@ fi
 
 echo "Configuring environment for [$NODE_TYPE] at $HOST_IP..."
 
-export_persist VLLM_HOST_IP=$HOST_IP
-export_persist RAY_NODE_IP_ADDRESS=$VLLM_HOST_IP
-export_persist RAY_OVERRIDE_NODE_IP_ADDRESS=$VLLM_HOST_IP
+export_persist VLLM_HOST_IP "$HOST_IP"
+export_persist RAY_NODE_IP_ADDRESS "$HOST_IP"
+export_persist RAY_OVERRIDE_NODE_IP_ADDRESS "$HOST_IP"
 
 # Network Interface
-export_persist MN_IF_NAME=$ETH_IF_NAME
-export_persist UCX_NET_DEVICES=$MN_IF_NAME
-export_persist NCCL_SOCKET_IFNAME=$MN_IF_NAME
+export_persist MN_IF_NAME "$ETH_IF_NAME"
+export_persist UCX_NET_DEVICES "$ETH_IF_NAME"
+export_persist NCCL_SOCKET_IFNAME "$ETH_IF_NAME"
 
 # InfiniBand
-export_persist NCCL_IB_HCA=$IB_IF_NAME
-export_persist NCCL_IB_DISABLE=0
+export_persist NCCL_IB_HCA "$IB_IF_NAME"
+export_persist NCCL_IB_DISABLE "0"
 
 # Sockets/Transport
-export_persist OMPI_MCA_btl_tcp_if_include=$MN_IF_NAME
-export_persist GLOO_SOCKET_IFNAME=$MN_IF_NAME
-export_persist TP_SOCKET_IFNAME=$MN_IF_NAME
-export_persist RAY_memory_monitor_refresh_ms=0
+export_persist OMPI_MCA_btl_tcp_if_include "$ETH_IF_NAME"
+export_persist GLOO_SOCKET_IFNAME "$ETH_IF_NAME"
+export_persist TP_SOCKET_IFNAME "$ETH_IF_NAME"
+export_persist RAY_memory_monitor_refresh_ms "0"
 
 # --- Execution ---
 

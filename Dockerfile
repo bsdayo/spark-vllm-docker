@@ -56,7 +56,7 @@ RUN pip install flashinfer-python --no-deps --index-url https://flashinfer.ai/wh
     pip install flashinfer-jit-cache --index-url https://flashinfer.ai/whl/cu130
 
 # Install fast safetensors to improve loading speeds
-RUN pip install fastsafetensors>=0.1.10
+RUN pip install fastsafetensors
 
 # --- VLLM SOURCE CACHE BUSTER ---
 # Change THIS argument to force a fresh git clone and rebuild of vLLM

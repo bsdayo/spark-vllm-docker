@@ -48,6 +48,8 @@ To avoid extra network overhead, you can copy the image directly to your second 
 docker save vllm-node | ssh your_username@another_spark_hostname_or_ip "docker load"
 ```
 
+**IMPORTANT**: make sure you use Spark IP assigned to it's ConnectX 7 interface (enp1s0f1np1) , and not 10G one (enP7s7)!
+
 -----
 
 ## 2\. Running the Container
@@ -98,6 +100,8 @@ docker run --privileged --gpus all -it --rm \
     --head-ip 192.168.177.11
 ```
 
+**IMPORTANT**: use the IP addresses associated with ConnectX 7 interface, not with 10G or wireless one!
+
 
 **Flags Explained:**
 
@@ -122,10 +126,10 @@ Normally you would start it with the container like in the example above, but yo
 | Flag | Long Flag | Description | Required? |
 | :--- | :--- | :--- | :--- |
 | `-r` | `--role` | Role of the machine: `head` or `node`. | **Yes** |
-| `-h` | `--host-ip` | The IP address of **this** specific machine (IB or Eth IP). | **Yes** |
-| `-e` | `--eth-if` | Ethernet interface name (e.g., `eth0`, `enp3s0`). | **Yes** |
-| `-i` | `--ib-if` | InfiniBand interface name (e.g., `ib0`, `rocep1s0f1`). | **Yes** |
-| `-m` | `--head-ip` | The IP address of the **Head Node**. | Only if role is `node` |
+| `-h` | `--host-ip` | The IP address of **this** specific machine (for ConnectX port, e.g. `enp1s0f1np1`). | **Yes** |
+| `-e` | `--eth-if` | ConnectX 7 Ethernet interface name (e.g., `enp1s0f1np1`). | **Yes** |
+| `-i` | `--ib-if` | ConnectX 7 InfiniBand interface name (e.g., `rocep1s0f1`). | **Yes** |
+| `-m` | `--head-ip` | The IP address of the **Head Node**. | Onl`y if role is `node` |
 
 
 **Hint**: to decide which interfaces to use, you can run `ibdev2netdev`. You will see an output like this:

@@ -56,11 +56,6 @@ RUN --mount=type=cache,id=pip-cache,target=/root/.cache/pip \
 RUN --mount=type=cache,id=pip-cache,target=/root/.cache/pip \
     pip install xgrammar fastsafetensors
 
-# Install latest Triton from main
-RUN --mount=type=cache,id=pip-cache,target=/root/.cache/pip \
-     pip install  git+https://github.com/triton-lang/triton.git \
-     git+https://github.com/triton-lang/triton.git#subdirectory=python/triton_kernels
-
 # Install FlashInfer packages
 RUN --mount=type=cache,id=pip-cache,target=/root/.cache/pip \
     pip install flashinfer-python --no-deps --index-url https://flashinfer.ai/whl && \
@@ -99,6 +94,8 @@ WORKDIR $VLLM_BASE_DIR/vllm
 RUN --mount=type=cache,id=pip-cache,target=/root/.cache/pip \
     python3 use_existing_torch.py && \
     sed -i "/flashinfer/d" requirements/cuda.txt && \
+    sed -i '/^triton\b/d' requirements/test.txt && \
+    sed -i '/^fastsafetensors\b/d' requirements/test.txt && \
     pip install -r requirements/build.txt
 
 # Apply Patches
@@ -113,6 +110,26 @@ RUN --mount=type=cache,id=ccache,target=/root/.ccache \
     --mount=type=cache,id=pip-cache,target=/root/.cache/pip \
     pip install --no-build-isolation . -v
 
+# Install latest Triton from main - override version pulled from dependencies
+
+# Initial clone (Cached forever)
+RUN git clone https://github.com/triton-lang/triton.git
+
+# We expect TRITON_SHA to be passed from the command line to break the cache
+# Set to v3.5.1 commit by default
+ARG TRITON_SHA=0add68262ab0a2e33b84524346cb27cbb2787356
+
+# This only runs if TRITON_SHA differs from the last build
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=cache,target=/root/.cache/ccache \
+    cd triton && \
+    git fetch origin && \
+    git checkout ${TRITON_SHA} && \
+    git submodule sync && \
+    git submodule update --init --recursive && \
+    pip install -r python/requirements.txt && \
+    pip install --no-build-isolation . -v && \
+    pip install python/triton_kernels --no-deps
 
 # =========================================================
 # STAGE 2: Runner (Transfers only necessary artifacts)

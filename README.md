@@ -18,10 +18,9 @@ This repository contains the Docker configuration and startup scripts to run a m
 
 ## DISCLAIMER
 
-This repository is not affiliated with NVIDIA or their subsidiaries. The content is provided as a reference material only, not intended for production use.
-Some of the steps and parameters may be unnecessary, and some may be missing. This is a work in progress. Use at your own risk!
+This repository is not affiliated with NVIDIA or their subsidiaries. This is a community effort aimed to help DGX Spark users to set up and run the most recent versions of vLLM on Spark cluster or single nodes. 
 
-The Dockerfile builds from the main branch of VLLM, so depending on when you run the build process, it may not be in fully functioning state.
+The Dockerfile builds from the main branch of VLLM, so depending on when you run the build process, it may not be in fully functioning state. You can target a specific vLLM release by setting `--vllm-ref` parameter.
 
 ## CHANGELOG
 

@@ -71,11 +71,13 @@ RUN --mount=type=cache,id=pip-cache,target=/root/.cache/pip \
 RUN --mount=type=cache,id=pip-cache,target=/root/.cache/pip \
     pip install xgrammar fastsafetensors
 
+ARG FLASHINFER_PRE=""
+
 # Install FlashInfer packages
 RUN --mount=type=cache,id=pip-cache,target=/root/.cache/pip \
-    pip install flashinfer-python --no-deps --index-url https://flashinfer.ai/whl --pre && \
-    pip install flashinfer-cubin --index-url https://flashinfer.ai/whl --pre && \
-    pip install flashinfer-jit-cache --index-url https://flashinfer.ai/whl/cu130 --pre && \
+    pip install ${FLASHINFER_PRE} flashinfer-python --no-deps --index-url https://flashinfer.ai/whl && \
+    pip install ${FLASHINFER_PRE} flashinfer-cubin --index-url https://flashinfer.ai/whl && \
+    pip install ${FLASHINFER_PRE} flashinfer-jit-cache --index-url https://flashinfer.ai/whl/cu130 && \
     pip install apache-tvm-ffi nvidia-cudnn-frontend nvidia-cutlass-dsl nvidia-ml-py tabulate
 
 # =========================================================

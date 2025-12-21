@@ -16,6 +16,7 @@ VLLM_REF="main"
 TMP_IMAGE=""
 PARALLEL_COPY=false
 USE_WHEELS_MODE=""
+PRE_FLASHINFER=false
 
 cleanup() {
     if [ -n "$TMP_IMAGE" ] && [ -f "$TMP_IMAGE" ]; then
@@ -69,6 +70,7 @@ usage() {
     echo "  -j, --build-jobs <jobs>   : Number of concurrent build jobs (default: \${BUILD_JOBS})"
     echo "  -u, --user <user>         : Username for ssh command (default: \$USER)"
     echo "  --use-wheels [mode]       : Use prebuilt vLLM wheels. Mode can be 'nightly' (default) or 'release'."
+    echo "  --pre-flashinfer          : Use pre-release versions of FlashInfer"
     echo "  --no-build                : Skip building, only copy image (requires --copy-to)"
     echo "  -h, --help                : Show this help message"
     exit 1
@@ -129,6 +131,7 @@ while [[ "$#" -gt 0 ]]; do
                 USE_WHEELS_MODE="nightly"
             fi
             ;;
+        --pre-flashinfer) PRE_FLASHINFER=true ;;
         --no-build) NO_BUILD=true ;;
         -h|--help) usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
@@ -180,6 +183,11 @@ if [ "$NO_BUILD" = false ]; then
 
     # Add BUILD_JOBS to build arguments
     CMD+=("--build-arg" "BUILD_JOBS=$BUILD_JOBS")
+
+    if [ "$PRE_FLASHINFER" = true ]; then
+        echo "Using pre-release FlashInfer..."
+        CMD+=("--build-arg" "FLASHINFER_PRE=--pre")
+    fi
 
     # Add build context
     CMD+=(".")

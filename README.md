@@ -26,6 +26,8 @@ The Dockerfile builds from the main branch of VLLM, so depending on when you run
 
 ### 2025-12-20
 
+- Limited ccache to 50G when building from source to reduce build cache size.
+- Added `--pre-flashinfer` flag to `build-and-copy.sh` to use pre-release versions of FlashInfer.
 - Added `--use-wheels [mode]` flag to `build-and-copy.sh`.
   - Allows building the container using pre-built vLLM wheels instead of compiling from source.
   - The resulting Docker container size is reduced considerably (14GB vs 24GB)
@@ -187,6 +189,7 @@ Using a different username:
 | `--triton-ref <ref>` | Triton commit SHA, branch or tag (default: 'v3.5.1') |
 | `--vllm-ref <ref>` | vLLM commit SHA, branch or tag (default: 'main') |
 | `--use-wheels [mode]` | Use pre-built vLLM wheels. Mode: `nightly` (default) or `release`. |
+| `--pre-flashinfer` | Use pre-release versions of FlashInfer. |
 | `-c, --copy-to <host[,host...] or host host...>` | Host(s) to copy the image to after building (space- or comma-separated list after the flag). |
 | `--copy-to-host` | Alias for `--copy-to` (backwards compatibility). |
 | `--copy-parallel` | Copy to all specified hosts concurrently. |

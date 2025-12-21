@@ -24,6 +24,26 @@ The Dockerfile builds from the main branch of VLLM, so depending on when you run
 
 ## CHANGELOG
 
+**IMPORTANT**
+
+You may want to prune your build cache every once in a while, especially if you've been using these container builds since the beginning. 
+
+You can check the build cache size by running:
+
+```bash
+docker system df
+```
+
+To prune the cache for the first time or if you notice unusually big cache size, use:
+
+```bash
+docker builder prune
+```
+
+Don't do it every time you rebuild, because it will slow down compilation times.
+
+For periodic maintenance, I recommend using a filter: `docker builder prune --filter until=72h`
+
 ### 2025-12-20
 
 - Limited ccache to 50G when building from source to reduce build cache size.

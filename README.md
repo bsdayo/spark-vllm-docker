@@ -19,6 +19,7 @@ While it was primarily developed to support multi-node inference, it works just 
 - [7. Using cluster mode for inference](#7-using-cluster-mode-for-inference)
 - [8. Fastsafetensors](#8-fastsafetensors)
 - [9. Benchmarking](#9-benchmarking)
+- [10. Downloading Models](#10-downloading-models)
 
 ## DISCLAIMER
 
@@ -76,6 +77,17 @@ Then run the following command that will build and distribute image across the c
 
 **On a cluster**
 
+It's recommended to download the model on one node and distribute across the cluster using ConnectX interconnect prior to launching. This is to avoid re-downloading the model from the Internet on every node in the cluster.
+
+This repository provides a convenience script, `hf-download.sh`. The following
+command will download the model and distribute it across the cluster using autodiscovery.
+
+```bash
+./hf-download.sh QuantTrio/MiniMax-M2-AWQ -c --copy-parallel
+```
+
+To launch the model:
+
 ```bash
 ./launch-cluster.sh exec vllm serve \
   QuantTrio/MiniMax-M2-AWQ \
@@ -114,6 +126,16 @@ docker builder prune
 Don't do it every time you rebuild, because it will slow down compilation times.
 
 For periodic maintenance, I recommend using a filter: `docker builder prune --filter until=72h`
+
+### 2025-12-24
+
+- Added `hf-download.sh` script to download models from HuggingFace using `uvx` and optionally copy them to other cluster nodes.
+
+Example usage. This will download model and distribute in parallel across all nodes in the cluster:
+
+```bash
+./hf-download.sh QuantTrio/GLM-4.7-AWQ -c --copy-parallel
+```
 
 ### 2025-12-23
 
@@ -654,6 +676,41 @@ vllm bench serve \
 ```
 
 Modify `--num-prompts` to benchmark concurrent requests - the command above will give you single request performance.
+
+## 10\. Downloading Models
+
+The `hf-download.sh` script provides a convenient way to download models from HuggingFace and distribute them across your cluster nodes. It uses Huggingface CLI via `uvx` for fast downloads and `rsync` for distribution across the cluster.
+
+### Prerequisites
+
+- `uvx` must be installed (the script will prompt you to install it if missing).
+- Passwordless SSH access to other nodes (if copying).
+
+### Usage
+
+**Download a model (local only):**
+
+```bash
+./hf-download.sh QuantTrio/MiniMax-M2-AWQ
+```
+
+**Download and copy to specific nodes:**
+
+```bash
+./hf-download.sh -c 192.168.177.12,192.168.177.13 QuantTrio/MiniMax-M2-AWQ
+```
+
+**Download and copy using autodiscovery:**
+
+```bash
+./hf-download.sh -c QuantTrio/MiniMax-M2-AWQ
+```
+
+**Download and copy in parallel:**
+
+```bash
+./hf-download.sh -c --copy-parallel QuantTrio/MiniMax-M2-AWQ
+```
 
 ### Hardware Architecture
 

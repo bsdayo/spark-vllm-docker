@@ -140,7 +140,10 @@ RUN --mount=type=cache,id=repo-cache,target=/repo-cache \
     # 2. Logic: Clone if missing, otherwise Fetch & Reset
     if [ ! -d "vllm" ]; then \
         echo "Cache miss: Cloning vLLM from scratch..." && \
-        git clone --recursive https://github.com/vllm-project/vllm.git; \
+        git clone https://github.com/vllm-project/vllm.git && \
+        cd vllm && \
+        git checkout ${VLLM_REF} && \
+        git submodule update --init --recursive; \
     else \
         echo "Cache hit: Fetching updates..." && \
         cd vllm && \
